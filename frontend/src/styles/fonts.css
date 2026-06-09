@@ -1,0 +1,22 @@
+/*
+ * DocVault — Font Configuration
+ * 
+ * Uses a system font stack for offline operation.
+ * Inter is preferred when available (users with it installed get the best experience).
+ * Falls back through a chain of high-quality system fonts.
+ *
+ * To use bundled Inter fonts for guaranteed consistency:
+ * 1. Download Inter woff2 from https://rsms.me/inter/
+ * 2. Place files in /public/fonts/
+ * 3. Uncomment the @font-face block below
+ */
+
+/*
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/Inter-Variable.woff2') format('woff2');
+}
+*/

@@ -1,31 +1,32 @@
-"""This is the pure model before it was wrapped in FastAPI and changed for HTTP Req/Res
-Only here for reference. Everything is used in app.py"""
+"""Reference standalone RAG pipeline — updated for DocVault (local Ollama).
+
+This file is NOT used at runtime (everything runs through app.py).
+It is kept here as a standalone reference and CLI tool for testing
+the RAG pipeline outside of the FastAPI server.
+
+All processing is fully local — no external API calls.
+"""
 
 import os
 from dotenv import load_dotenv
 
-
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import FAISS
-
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-
-from langchain_groq import ChatGroq
+from langchain_core.output_parsers import StrOutputParser
+from langchain_ollama import ChatOllama
 
 import pyttsx3
-
+from datetime import datetime
 
 
 load_dotenv()
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY not found in .env")
-
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3:4b")
 
 
 def load_pdf(pdf_path: str):
@@ -35,66 +36,80 @@ def load_pdf(pdf_path: str):
     return loader.load()
 
 
-
 def split_docs(documents):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
-        chunk_overlap=200
+        chunk_overlap=200,
     )
     return splitter.split_documents(documents)
-
 
 
 def create_vector_store(chunks):
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
-
     vectorstore = FAISS.from_documents(
         documents=chunks,
-        embedding=embeddings
+        embedding=embeddings,
     )
     return vectorstore
 
 
-
 def load_llm():
-    llm = ChatGroq(
-        model="llama-3.1-8b-instant",
-        temperature=0.3
+    """Load the local Ollama LLM — no API keys needed."""
+    llm = ChatOllama(
+        model=OLLAMA_MODEL,
+        base_url=OLLAMA_BASE_URL,
+        temperature=0.2,
     )
     return llm
 
 
+def format_context_with_pages(docs) -> str:
+    """Format retrieved documents with page numbers for citation."""
+    formatted = []
+    for doc in docs:
+        page = doc.metadata.get("page", "?")
+        page_display = page + 1 if isinstance(page, int) else page
+        formatted.append(f"[Page {page_display}]\n{doc.page_content}")
+    return "\n\n---\n\n".join(formatted)
+
 
 def create_rag_chain(vectorstore, llm):
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
     prompt = ChatPromptTemplate.from_template(
-        """
-        Answer the question using ONLY the context below.
-        If the answer is not present in the context, say "I don't know".
+        """You are DocVault, a privacy-first document analysis assistant.
 
-        Context:
-        {context}
+CRITICAL RULES:
+1. Answer ONLY using the provided context. Never use external knowledge.
+2. If the answer cannot be found in the context, explicitly say:
+   "This information is not present in the provided documents."
+3. For every claim you make, reference the source by page number.
+4. Be precise and cite evidence over speculation.
 
-        Question:
-        {question}
-        """
+Context (with page numbers):
+{context}
+
+Question: {question}"""
     )
 
     rag_chain = (
-        {"context": retriever, "question": RunnablePassthrough()}
+        {
+            "context": retriever | format_context_with_pages,
+            "question": RunnablePassthrough(),
+        }
         | prompt
         | llm
+        | StrOutputParser()
     )
 
     return rag_chain
 
-from datetime import datetime
 
 AUDIO_DIR = "audio_outputs"
 os.makedirs(AUDIO_DIR, exist_ok=True)
+
 
 def speak(text: str):
     engine = pyttsx3.init()
@@ -102,6 +117,7 @@ def speak(text: str):
     engine.say(text)
     engine.runAndWait()
     engine.stop()
+
 
 def save_audio(text: str):
     engine = pyttsx3.init()
@@ -116,13 +132,11 @@ def save_audio(text: str):
 
     print(f"[Audio saved] {audio_path}")
 
-    
-
-
 
 def ask_question(chain, query):
     response = chain.invoke(query)
-    answer_text = response.content
+    # StrOutputParser returns a string directly
+    answer_text = response
 
     print("\nAnswer:\n")
     print(answer_text)
@@ -131,10 +145,8 @@ def ask_question(chain, query):
     speak(answer_text)
 
     choice = input("Save this response as audio? (y/n): ").strip().lower()
-
     if choice == "y":
         save_audio(answer_text)
-
 
 
 if __name__ == "__main__":
@@ -149,13 +161,13 @@ if __name__ == "__main__":
     print("Creating vector store...")
     vectorstore = create_vector_store(chunks)
 
-    print("Loading Groq LLM...")
+    print("Loading local Ollama LLM (Gemma 3 4B)...")
     llm = load_llm()
 
     print("Building RAG pipeline...")
     rag_chain = create_rag_chain(vectorstore, llm)
 
-    print("\n RAG system ready!")
+    print("\n✅ DocVault RAG system ready! (100% local processing)")
     print("Type a question or 'exit'\n")
 
     while True:
@@ -163,5 +175,4 @@ if __name__ == "__main__":
         if q.lower() == "exit":
             print("Bye!")
             break
-
         ask_question(rag_chain, q)

@@ -2,4 +2,5 @@ venv/
 .env
 __pycache__/
 *.pyc
-src/uploads
+src/uploads/
+src/audio_outputs/

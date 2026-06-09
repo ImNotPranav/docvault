@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { Shield, Lock } from "lucide-react";
 
 export default function Navbar() {
   return (
@@ -7,22 +7,23 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-              <FileText className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-semibold text-white tracking-tight">AskMyPDF</span>
+            <span className="text-lg font-semibold text-white tracking-tight">DocVault</span>
           </div>
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Features</a>
-            <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Community</a>
+            <a href="#features" className="text-sm text-slate-400 hover:text-white transition-colors">Features</a>
+            <a href="#how-it-works" className="text-sm text-slate-400 hover:text-white transition-colors">How It Works</a>
           </div>
 
-          {/* CTA */}
-          <button className="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg hover:from-violet-500 hover:to-indigo-500 transition-all shadow-lg shadow-violet-500/20 hover:shadow-violet-500/30 hover:scale-[1.02] active:scale-[0.98]">
-            Get Started
-          </button>
+          {/* Privacy Badge */}
+          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+            <Lock className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-xs font-medium text-emerald-300">100% Local</span>
+          </div>
         </div>
       </div>
     </nav>

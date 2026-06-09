@@ -1,7 +1,12 @@
 langchain
 langchain-community
-langchain-google-genai
-google-generativeai
+langchain-huggingface
+langchain-ollama
+langchain-text-splitters
 faiss-cpu
 pypdf
 python-dotenv
+fastapi
+uvicorn[standard]
+python-multipart
+pyttsx3

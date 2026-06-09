@@ -1,4 +1,4 @@
-import { Send, Loader2, Sparkles } from "lucide-react";
+import { Send, Loader2, Shield } from "lucide-react";
 import { UploadStatus } from "../App";
 import { useState, useRef, useEffect } from "react";
 
@@ -33,7 +33,7 @@ export default function QuestionInput({ question, setQuestion, uploadStatus, han
             relative bg-[#12122a]/90 backdrop-blur-xl rounded-2xl
             border transition-all duration-300
             ${isFocused
-              ? 'border-violet-500/50 shadow-lg shadow-violet-500/10'
+              ? 'border-emerald-500/50 shadow-lg shadow-emerald-500/10'
               : 'border-white/10 hover:border-white/20'
             }
             ${isDisabled ? 'opacity-50' : ''}
@@ -56,7 +56,7 @@ export default function QuestionInput({ question, setQuestion, uploadStatus, han
                 placeholder={
                   uploadStatus === "ready"
                     ? "Ask anything about your document..."
-                    : "Upload a PDF to start asking questions..."
+                    : "Upload a document to start analyzing..."
                 }
                 disabled={isDisabled}
                 rows={1}
@@ -78,11 +78,11 @@ export default function QuestionInput({ question, setQuestion, uploadStatus, han
                 flex items-center justify-center
                 transition-all duration-200
                 ${canSend
-                  ? 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-500/20 hover:shadow-violet-500/30 hover:scale-105 active:scale-95'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:scale-105 active:scale-95'
                   : 'bg-white/5 text-slate-600 cursor-not-allowed'
                 }
               `}
-              title={isAsking ? "Generating response..." : "Send message"}
+              title={isAsking ? "Analyzing..." : "Send message"}
             >
               {isAsking ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -94,9 +94,9 @@ export default function QuestionInput({ question, setQuestion, uploadStatus, han
 
           {uploadStatus === "ready" && (
             <div className="px-4 pb-3 flex items-center justify-center gap-2">
-              <Sparkles className="w-3 h-3 text-violet-400/60" />
+              <Shield className="w-3 h-3 text-emerald-400/60" />
               <span className="text-[11px] text-slate-600">
-                Press Enter to send · Shift + Enter for new line
+                All answers are generated locally · Press Enter to send
               </span>
             </div>
           )}

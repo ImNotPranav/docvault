@@ -1,9 +1,9 @@
-import { FileText } from "lucide-react";
+import { Shield, Lock } from "lucide-react";
 
 const footerLinks = {
-    Product: ["Features", "Pricing", "Updates"],
-    Community: ["Discord", "Twitter", "Blog"],
-    Legal: ["Privacy", "Terms"],
+    Product: ["Features", "How It Works", "Privacy"],
+    Resources: ["Setup Guide", "Documentation"],
+    Legal: ["Privacy Policy", "Terms"],
 };
 
 export default function Footer() {
@@ -14,14 +14,18 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="col-span-2 md:col-span-1">
                         <div className="flex items-center gap-2.5 mb-4">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
-                                <FileText className="w-4 h-4 text-white" />
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                                <Shield className="w-4 h-4 text-white" />
                             </div>
-                            <span className="text-base font-semibold text-white">AskMyPDF</span>
+                            <span className="text-base font-semibold text-white">DocVault</span>
                         </div>
                         <p className="text-sm text-slate-500 leading-relaxed">
-                            Your AI-powered study companion. Upload PDFs and get instant answers.
+                            Privacy-first document analysis. All processing happens locally on your device.
                         </p>
+                        <div className="flex items-center gap-1.5 mt-3">
+                            <Lock className="w-3 h-3 text-emerald-500" />
+                            <span className="text-xs text-emerald-400/80">No cloud. No tracking. Your data stays yours.</span>
+                        </div>
                     </div>
 
                     {/* Link Columns */}
@@ -47,10 +51,10 @@ export default function Footer() {
                 {/* Bottom bar */}
                 <div className="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-xs text-slate-600">
-                        © {new Date().getFullYear()} AskMyPDF. All rights reserved.
+                        © {new Date().getFullYear()} DocVault. All rights reserved.
                     </p>
                     <p className="text-xs text-slate-600">
-                        AI Study Companion can make mistakes. Verify important info.
+                        Powered by Gemma 3 via Ollama — 100% local inference.
                     </p>
                 </div>
             </div>
